@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-watcher
+  labels:
+    app: k8s-watcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-watcher
+  template:
+    metadata:
+      labels:
+        app: k8s-watcher
+    spec:
+      containers:
+      - name: k8s-watcher-container
+        image: yoonseongduk/k8s-watcher:latest  # Docker 이미지 이름 수정
+        env:
+        - name: TZ  # 환경 변수 설정 (필요시)
+          value: "Asia/Seoul"              
+        - name: SECRET_KEY  # 환경 변수 설정
+          valueFrom:
+            secretKeyRef:
+              name: k8s-watcher-secret  # Secret 이름
+              key: SECRET_KEY            # Secret의 키
