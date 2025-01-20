@@ -22,6 +22,7 @@ FROM alpine:3.19
 RUN apk --no-cache add ca-certificates tzdata
 ENV TZ=Asia/Seoul
 WORKDIR /root/
+COPY compare_fields.json .
 # Copy the binary from builder
 COPY --from=builder /app/watcher .
 # Copy kubeconfig if needed
