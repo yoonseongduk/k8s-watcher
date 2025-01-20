@@ -17,6 +17,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o watcher .
 
 # Final stage
 FROM alpine:3.19
+
+ENV TZ=Asia/Seoul
 # Add ca-certificates for HTTPS
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
