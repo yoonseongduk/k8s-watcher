@@ -104,49 +104,70 @@ func main() {
 func comparePods(oldPod, newPod *v1.Pod) map[string][2]interface{} {
 	changedFields := make(map[string][2]interface{})
 
-	// 필드 비교
-	if oldPod.Status.Phase != newPod.Status.Phase {
-		changedFields["Phase"] = [2]interface{}{oldPod.Status.Phase, newPod.Status.Phase}
+	// 비교 항목을 파일에서 읽기
+	file, err := os.Open("compare_fields.json")
+	if err != nil {
+		logError("Error opening compare fields file", err)
+		return changedFields
+	}
+	defer file.Close()
+
+	var fields struct {
+		Fields []struct {
+			Name    string `json:"name"`
+			Compare string `json:"compare"`
+		} `json:"fields"`
+	}
+	if err := json.NewDecoder(file).Decode(&fields); err != nil {
+		logError("Error decoding compare fields JSON", err)
+		return changedFields
 	}
 
-	if oldPod.Spec.Containers[0].Image != newPod.Spec.Containers[0].Image {
-		changedFields["Image"] = [2]interface{}{oldPod.Spec.Containers[0].Image, newPod.Spec.Containers[0].Image}
+	// 필드 비교 수행
+	for _, field := range fields.Fields {
+		switch field.Name {
+		case "Phase":
+			if oldPod.Status.Phase != newPod.Status.Phase {
+				changedFields["Phase"] = [2]interface{}{oldPod.Status.Phase, newPod.Status.Phase}
+			}
+		case "Image":
+			if oldPod.Spec.Containers[0].Image != newPod.Spec.Containers[0].Image {
+				changedFields["Image"] = [2]interface{}{oldPod.Spec.Containers[0].Image, newPod.Spec.Containers[0].Image}
+			}
+		case "RestartPolicy":
+			if oldPod.Spec.RestartPolicy != newPod.Spec.RestartPolicy {
+				changedFields["RestartPolicy"] = [2]interface{}{oldPod.Spec.RestartPolicy, newPod.Spec.RestartPolicy}
+			}
+		case "HostIP":
+			if oldPod.Status.HostIP != newPod.Status.HostIP {
+				changedFields["HostIP"] = [2]interface{}{oldPod.Status.HostIP, newPod.Status.HostIP}
+			}
+		case "PodIP":
+			if oldPod.Status.PodIP != newPod.Status.PodIP {
+				changedFields["PodIP"] = [2]interface{}{oldPod.Status.PodIP, newPod.Status.PodIP}
+			}
+		case "TerminationGracePeriodSeconds":
+			if oldPod.Spec.TerminationGracePeriodSeconds != newPod.Spec.TerminationGracePeriodSeconds {
+				changedFields["TerminationGracePeriodSeconds"] = [2]interface{}{oldPod.Spec.TerminationGracePeriodSeconds, newPod.Spec.TerminationGracePeriodSeconds}
+			}
+		case "ActiveDeadlineSeconds":
+			if oldPod.Spec.ActiveDeadlineSeconds != newPod.Spec.ActiveDeadlineSeconds {
+				changedFields["ActiveDeadlineSeconds"] = [2]interface{}{oldPod.Spec.ActiveDeadlineSeconds, newPod.Spec.ActiveDeadlineSeconds}
+			}
+		case "NodeName":
+			if oldPod.Spec.NodeName != newPod.Spec.NodeName {
+				changedFields["NodeName"] = [2]interface{}{oldPod.Spec.NodeName, newPod.Spec.NodeName}
+			}
+		case "Reason":
+			if oldPod.Status.Reason != newPod.Status.Reason {
+				changedFields["Reason"] = [2]interface{}{oldPod.Status.Reason, newPod.Status.Reason}
+			}
+		case "Message":
+			if oldPod.Status.Message != newPod.Status.Message {
+				changedFields["Message"] = [2]interface{}{oldPod.Status.Message, newPod.Status.Message}
+			}
+		}
 	}
-
-	if oldPod.Spec.RestartPolicy != newPod.Spec.RestartPolicy {
-		changedFields["RestartPolicy"] = [2]interface{}{oldPod.Spec.RestartPolicy, newPod.Spec.RestartPolicy}
-	}
-
-	if oldPod.Status.HostIP != newPod.Status.HostIP {
-		changedFields["HostIP"] = [2]interface{}{oldPod.Status.HostIP, newPod.Status.HostIP}
-	}
-
-	if oldPod.Status.PodIP != newPod.Status.PodIP {
-		changedFields["PodIP"] = [2]interface{}{oldPod.Status.PodIP, newPod.Status.PodIP}
-	}
-
-	// 추가적인 필드 비교
-	if oldPod.Spec.TerminationGracePeriodSeconds != newPod.Spec.TerminationGracePeriodSeconds {
-		changedFields["TerminationGracePeriodSeconds"] = [2]interface{}{oldPod.Spec.TerminationGracePeriodSeconds, newPod.Spec.TerminationGracePeriodSeconds}
-	}
-
-	if oldPod.Spec.ActiveDeadlineSeconds != newPod.Spec.ActiveDeadlineSeconds {
-		changedFields["ActiveDeadlineSeconds"] = [2]interface{}{oldPod.Spec.ActiveDeadlineSeconds, newPod.Spec.ActiveDeadlineSeconds}
-	}
-
-	if oldPod.Spec.NodeName != newPod.Spec.NodeName {
-		changedFields["NodeName"] = [2]interface{}{oldPod.Spec.NodeName, newPod.Spec.NodeName}
-	}
-
-	if oldPod.Status.Reason != newPod.Status.Reason {
-		changedFields["Reason"] = [2]interface{}{oldPod.Status.Reason, newPod.Status.Reason}
-	}
-
-	if oldPod.Status.Message != newPod.Status.Message {
-		changedFields["Message"] = [2]interface{}{oldPod.Status.Message, newPod.Status.Message}
-	}
-
-	// 추가적인 필드 비교를 여기에 추가할 수 있습니다.
 
 	return changedFields
 }

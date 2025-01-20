@@ -1,0 +1,44 @@
+{
+    "fields": [
+        {
+            "name": "Phase",
+            "compare": "Status.Phase"
+        },
+        {
+            "name": "Image",
+            "compare": "Spec.Containers[0].Image"
+        },
+        {
+            "name": "RestartPolicy",
+            "compare": "Spec.RestartPolicy"
+        },
+        {
+            "name": "HostIP",
+            "compare": "Status.HostIP"
+        },
+        {
+            "name": "PodIP",
+            "compare": "Status.PodIP"
+        },
+        {
+            "name": "TerminationGracePeriodSeconds",
+            "compare": "Spec.TerminationGracePeriodSeconds"
+        },
+        {
+            "name": "ActiveDeadlineSeconds",
+            "compare": "Spec.ActiveDeadlineSeconds"
+        },
+        {
+            "name": "NodeName",
+            "compare": "Spec.NodeName"
+        },
+        {
+            "name": "Reason",
+            "compare": "Status.Reason"
+        },
+        {
+            "name": "Message",
+            "compare": "Status.Message"
+        }
+    ]
+}
